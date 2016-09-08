@@ -19,7 +19,7 @@ export class AtlasDatasource {
     // Required for templating
     metricFindQuery(query) {
         return this.backendSrv.datasourceRequest({
-            url: this.url + '/api/v1/tags/' + (query ? this.templateSrv.replace(query) : 'name'),
+            url: this.url + '/api/v1/tags/' + (query ? this.templateSrv.replaceWithText(query) : 'name'),
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,6 +72,7 @@ export class AtlasDatasource {
     query(options) {
         var queries = [];
         var _this = this;
+        var _scopeTags = _this.templateSrv.variables;
         options.targets.forEach(function(target) {
             if (target.hide || !(target.rawQuery || target.target)) {
                 return;
@@ -99,6 +100,11 @@ export class AtlasDatasource {
                 }
                 var queryParts = [];
                 queryParts.push("name," + target.target + ",:eq");
+                if (_scopeTags) {
+                    for (var i = 0; i < _scopeTags.length; i++) {
+                        queryParts.push(_scopeTags[i].name + "," + _scopeTags[i].current.text + ",:eq,:and");
+                    }
+                }
                 if (target.tags) {
                     var logicals = [];
                     for (var i = 0, len = target.tags.length; i < len; i++) {
