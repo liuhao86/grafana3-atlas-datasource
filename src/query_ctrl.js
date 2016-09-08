@@ -46,7 +46,7 @@ export class AtlasDatasourceQueryCtrl extends QueryCtrl {
     }
 
     getOptions() {
-        return this.datasource.metricFindQuery(this.target)
+        return this.datasource.metricFind(this.target)
             .then(this.uiSegmentSrv.transformToSegments(true));
         // Options have to be transformed by uiSegmentSrv to be usable by metric-segment-model directive
     }

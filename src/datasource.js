@@ -17,7 +17,17 @@ export class AtlasDatasource {
     }
 
     // Required for templating
-    metricFindQuery(options) {
+    metricFindQuery(query) {
+        return this.backendSrv.datasourceRequest({
+            url: this.url + '/api/v1/tags/' + (query ? this.templateSrv.replace(query) : 'name'),
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(this.mapToTextValue);
+    }
+
+    metricFind(options) {
         return this.backendSrv.datasourceRequest({
             url: this.url + '/api/v1/tags/name',
             data: options,
@@ -27,6 +37,7 @@ export class AtlasDatasource {
             }
         }).then(this.mapToTextValue);
     }
+
     mapToTextValue(result) {
         return _.map(result.data, (d, i) => {
             return {
