@@ -102,9 +102,12 @@ export class AtlasDatasource {
                 queryParts.push("name," + target.target + ",:eq");
                 if (_scopeTags) {
                     for (var i = 0; i < _scopeTags.length; i++) {
-                        queryParts.push(_scopeTags[i].name + "," + _scopeTags[i].current.text + ",:eq,:and");
+                        if (_scopeTags[i].current.text != 'All') {
+                            queryParts.push(_scopeTags[i].name + "," + _scopeTags[i].current.text + ",:eq,:and");
+                        }
                     }
                 }
+                var hasPushAggregation = false;
                 if (target.tags) {
                     var logicals = [];
                     for (var i = 0, len = target.tags.length; i < len; i++) {
@@ -146,6 +149,7 @@ export class AtlasDatasource {
                           // legend must come before this matcher
                           // aggregation must come before this matcher, so the name must be pushed after
                           if (target.aggregation) {
+                              hasPushAggregation = true;
                               queryParts.push(":" + target.aggregation);
                           }
                           queryParts.push(aTag.name);
@@ -171,9 +175,9 @@ export class AtlasDatasource {
                     }
                     queryParts = queryParts.concat(logicals.reverse());
                 }
-                //if (target.aggregation) {
-                //    queryParts.push(":" + target.aggregation);
-                //}
+                if (target.aggregation && !hasPushAggregation) {
+                   queryParts.push(":" + target.aggregation);
+                }
                 if (target.groupBys && target.groupBys.length > 0) {
                     queryParts.push("(");
                     target.groupBys.forEach(function(groupBy) {
