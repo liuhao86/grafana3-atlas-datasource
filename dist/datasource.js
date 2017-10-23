@@ -61,7 +61,7 @@ System.register(["angular", "lodash", "app/core/utils/datemath", "app/core/utils
                     key: "metricFindQuery",
                     value: function metricFindQuery(options) {
                         return this.backendSrv.datasourceRequest({
-                            url: this.url + '/api/v1/tags/name',
+                            url: this.url + '/api/v1/tags/'+((typeof options === "string")?options:"name"),
                             data: options,
                             method: 'GET',
                             headers: {
@@ -301,7 +301,7 @@ System.register(["angular", "lodash", "app/core/utils/datemath", "app/core/utils
                                 return series;
                             }
 
-                            var values = _.pluck(result.values, index);
+                            var values = _.map(result.values, index);
 
                             var notAllZero = false;
                             var notAllNull = false;
